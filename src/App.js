@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Modal from "./components/Modal";
 
 const API_URL = "http://localhost:5000/portfolio";
 
 function App() {
   const [stocks, setStocks] = useState([]);
+
   useEffect(() => {
     fetchStocks();
     console.log("stocks", stocks);
@@ -26,6 +28,24 @@ function App() {
       item.Weight = item.Weight.toFixed(4);
       return item;
     });
+  };
+  //Popup Modal
+  const [activeItemId, setActiveItemId] = useState(null);
+
+  const items = [
+    { id: 1, name: "Item 1", description: "Details about item 1" },
+    { id: 2, name: "Item 2", description: "Details about item 2" },
+    { id: 3, name: "Item 3", description: "Details about item 3" },
+  ];
+
+  const activeItem = items.find((item) => item.id === activeItemId);
+
+  const openPopup = (itemId) => {
+    setActiveItemId(itemId);
+  };
+
+  const closePopup = () => {
+    setActiveItemId(null);
   };
   return (
     <div className='App'>
@@ -55,6 +75,25 @@ function App() {
           ))}
         </tbody>
       </table>
+      <div>
+        <ul>
+          {items.map((item) => (
+            <li key={item.id}>
+              <span>{item.name}</span>
+              <button onClick={() => openPopup(item.id)}>View Details</button>
+            </li>
+          ))}
+        </ul>
+        {activeItemId !== null && (
+          <div>
+            <Modal
+              onClose={closePopup}
+              name={activeItem.name}
+              description={activeItem.description}
+            ></Modal>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
